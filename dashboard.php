@@ -1,6 +1,16 @@
 <?php
+$host = 'localhost';
+$database = 'onestore';
+$user = 'onestore';
+$password = 'root';
+$dsn = 'mysql:host=' . $host . ';dbname=' . $database;
+$connection = new PDO($dsn, $user, $password);
+$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if (isset($_GET['search'])) dump($_GET['search']);
+$statement = $connection->query('SELECT * FROM products');
+$statement->execute();
+$products = $statement->fetchAll(PDO::FETCH_ASSOC);
+// dump($products);
 
 function dump($var)
 {
@@ -9,7 +19,6 @@ function dump($var)
     var_dump($var);
     echo '</pre>';
 }
-
 
 ?>
 
@@ -51,24 +60,30 @@ function dump($var)
                     <th scope="col">Id</th>
                     <th scope="col">Image</th>
                     <th scope="col">Title</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Desc.</th>
                     <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td>Otto</td>
-                    <td>@mdo</td>
-                    <td>
-                        <a class="btn btn-sm btn-outline-primary" href="./edit.php">Edit</a>
+                <?php foreach ($products as $i => $product) { ?>
+                    <tr>
+                        <th scope="row"><?php
+                                        echo $i + 1;
+                                        ?></th>
+                        <td><img src="./images/doyin.jpg" width="50" height="50" alt=""></td>
+                        <td><?php echo $product['title'] ?></td>
+                        <td><?php echo $product['price'] ?></td>
+                        <td><?php echo $product['description'] ?></td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-primary" href="./edit.php">Edit</a>
 
-                        <form class="d-inline-block" action="./delete.php" method="post">
-                            <button class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                            <form class="d-inline-block" action="./delete.php" method="post">
+                                <button class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php } ?>
             </tbody>
         </table>
     </div>
